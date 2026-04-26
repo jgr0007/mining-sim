@@ -3,13 +3,13 @@
 
 #include "SimManager.h"
 
-SimManager::SimManager(int numTrucks, int numSites)
+SimManager::SimManager(int numTrucks, int numStations)
 {
     for (int i=0; i<numTrucks; i++) {
         trucks.emplace_back(Truck(i));
     }
-    for (int i=0; i<numSites; i++) {
-        sites.emplace_back(Site(i));
+    for (int i=0; i<numStations; i++) {
+        stations.emplace_back(Station(i));
     }
 }
 
@@ -18,8 +18,8 @@ void SimManager::tick()
     for (Truck &truck : trucks) {
         // TODO: Make decision for truck
     }
-    for (Site &site : sites) {
-        // TODO: Get site updates.
+    for (Station &station : stations) {
+        // TODO: Get station updates.
     }
 }
 
@@ -45,14 +45,14 @@ void SimManager::print_statistics()
         }
     }
 
-    int sitesUnused{0};
-    int sitesBusy{0};
+    int stationsUnused{0};
+    int stationsBusy{0};
 
-    for (const Site &site : sites) {
-        if (site.get_waiting()) {
-            sitesBusy++;
+    for (const Station &station : stations) {
+        if (station.get_waiting()) {
+            stationsBusy++;
         } else {
-            sitesUnused++;
+            stationsUnused++;
         }
     }
 
@@ -76,8 +76,8 @@ void SimManager::print_statistics()
         << std::left << std::setw(colWidth) << truckTraveling
         << std::left << std::setw(colWidth) << trucksWaiting
         << std::left << std::setw(colWidth) << trucksUnloading
-        << std::left << std::setw(colWidth) << sitesUnused
-        << std::left << std::setw(colWidth) << sitesBusy 
+        << std::left << std::setw(colWidth) << stationsUnused
+        << std::left << std::setw(colWidth) << stationsBusy 
         << "\n";
 }
 
@@ -85,7 +85,7 @@ const Truck& SimManager::get_truck(int truckId)
 {
     return trucks[truckId];
 }
-const Site& SimManager::get_site(int siteId)
+const Station& SimManager::get_station(int stationId)
 {
-    return sites[siteId];
+    return stations[stationId];
 }

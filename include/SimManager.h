@@ -3,12 +3,12 @@
 
 #include <vector>
 
-#include "Site.h"
+#include "Station.h"
 #include "Truck.h"
 
 class SimManager {
 public:
-    SimManager(int numTrucks, int numSites);
+    SimManager(int numTrucks, int numStations);
 
     /**
     * @brief Perform one minute of simulation.
@@ -20,10 +20,10 @@ public:
     void print_statistics();
 
     const Truck& get_truck(int truckId);
-    const Site& get_site(int sitedId);
+    const Station& get_station(int stationdId);
 private:
     std::vector<Truck> trucks;
-    std::vector<Site> sites;
+    std::vector<Station> stations;
 };
 
 #endif // SIM_MANAGER_H

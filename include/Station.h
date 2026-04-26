@@ -5,9 +5,9 @@
 
 #include "Truck.h"
 
-class Site {
+class Station {
 public:
-    Site(int _id);
+    Station(int _id);
     int get_id() const;
     int get_waiting() const;
     void finish_unload();

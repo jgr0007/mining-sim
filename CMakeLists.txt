@@ -8,9 +8,9 @@ target_include_directories(mining_sim PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/inclu
 
 target_sources(mining_sim PRIVATE src/main.cpp
     include/SimManager.h
-    include/Site.h
+    include/Station.h
     include/Truck.h
     src/SimManager.cpp
-    src/Site.cpp
+    src/Station.cpp
     src/Truck.cpp
 )
