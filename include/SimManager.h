@@ -3,12 +3,13 @@
 
 #include <vector>
 
+#include "Coordinator.h"
 #include "Station.h"
 #include "Truck.h"
 
 class SimManager {
 public:
-    SimManager(int numTrucks, int numStations);
+    explicit SimManager(int numTrucks, const std::shared_ptr<Coordinator> &_coordinator);
 
     /**
     * @brief Perform one minute of simulation.
@@ -18,12 +19,11 @@ public:
     void tick();
     
     void print_statistics();
-
-    const Truck& get_truck(int truckId);
-    const Station& get_station(int stationdId);
+    void print_metrics();
 private:
     std::vector<Truck> trucks;
-    std::vector<Station> stations;
+    std::shared_ptr<Coordinator> coordinator;
+    int tick_count;
 };
 
 #endif // SIM_MANAGER_H

@@ -7,9 +7,12 @@ add_executable(mining_sim "")
 target_include_directories(mining_sim PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 target_sources(mining_sim PRIVATE src/main.cpp
+    include/Coordinator.h
+    include/Metrics.h
     include/SimManager.h
     include/Station.h
     include/Truck.h
+    src/Coordinator.cpp
     src/SimManager.cpp
     src/Station.cpp
     src/Truck.cpp

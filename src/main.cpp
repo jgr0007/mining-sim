@@ -2,29 +2,29 @@
 
 #include "SimManager.h"
 
-const int TOTAL_HOURS_SIM = 72;
-const int MINS_PER_HOUR = 60;
-const int TOTAL_MINS_SIM = 72 * MINS_PER_HOUR;
+static const int TOTAL_HOURS_SIM = 72;
+static const int MINS_PER_HOUR = 60;
+static const int TOTAL_MINS_SIM = 72 * MINS_PER_HOUR;
+
+static const int DEFAULT_NUM_TRUCKS = 40;
+static const int DEFAULT_NUM_STATIONS = 3;
 
 int main()
 {
-    // (1) Read in configuration
-    // (2) Instantiate objects
-    SimManager simManager(3,3);
-    // (3) Run sim.
+    // TODO: Read in configuration
+    std::shared_ptr<Coordinator> coordinator = std::make_shared<Coordinator>(DEFAULT_NUM_STATIONS);
+    SimManager simManager(DEFAULT_NUM_TRUCKS, coordinator);
 
-    int currentMin = 0;
-    while (currentMin<TOTAL_MINS_SIM) {
-        currentMin++;
+    int currentMinute = 0;
+    while (currentMinute<TOTAL_MINS_SIM) {
+        currentMinute++;
 
-        // (1) Tick
         simManager.tick();
-        // (2) Print statistics once per hour
-        if (!(currentMin%MINS_PER_HOUR)) {
+        if (!(currentMinute%MINS_PER_HOUR)) {
             simManager.print_statistics();
         }
     }
-    // (4) Output report
+    simManager.print_metrics();
 
     return 0;
 }

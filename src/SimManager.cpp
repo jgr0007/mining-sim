@@ -3,24 +3,23 @@
 
 #include "SimManager.h"
 
-SimManager::SimManager(int numTrucks, int numStations)
+SimManager::SimManager(int numTrucks, const std::shared_ptr<Coordinator> &_coordinator)
+:
+coordinator(_coordinator),
+tick_count(0)
 {
     for (int i=0; i<numTrucks; i++) {
-        trucks.emplace_back(Truck(i));
-    }
-    for (int i=0; i<numStations; i++) {
-        stations.emplace_back(Station(i));
+        trucks.emplace_back(Truck(i, coordinator));
     }
 }
 
 void SimManager::tick()
 {
+    tick_count++;
     for (Truck &truck : trucks) {
-        // TODO: Make decision for truck
+        truck.work();
     }
-    for (Station &station : stations) {
-        // TODO: Get station updates.
-    }
+    coordinator->increment_station_metrics();
 }
 
 void SimManager::print_statistics()
@@ -33,7 +32,7 @@ void SimManager::print_statistics()
     for (const Truck &truck : trucks) {
         if (truck.get_status() == TRUCK_STATUS_MINING) {
             trucksMining++;
-        } else if (truck.get_status() == TRUCK_STATUS_TRAVEL_TO_SITE || truck.get_status() == TRUCK_STATUS_TRAVEL_TO_MINE) {
+        } else if ((truck.get_status() == TRUCK_STATUS_TRAVEL_TO_STATION) || (truck.get_status() == TRUCK_STATUS_TRAVEL_TO_MINE)) {
             truckTraveling++;
         } else if (truck.get_status() == TRUCK_STATUS_WAITING) {
             trucksWaiting++;
@@ -47,18 +46,12 @@ void SimManager::print_statistics()
 
     int stationsUnused{0};
     int stationsBusy{0};
+    std::vector<StationMetrics> metrics{};
+    coordinator->get_station_metrics(stationsUnused, stationsBusy, metrics);
 
-    for (const Station &station : stations) {
-        if (station.get_waiting()) {
-            stationsBusy++;
-        } else {
-            stationsUnused++;
-        }
-    }
-
-    // 3. Print Headers
-    std::cout << "Current Statistics\n********************************";
-    const int colWidth = 14;
+    std::cout << "\nEnd of Minute (Tick): " << tick_count << std::endl;
+    std::cout << "\n************************************************************************************************************\n";
+    const int colWidth = 18;
     const std::vector<std::string> headers = {
         "TRUCKS MINING",
         "TRUCKS IN TRANSIT",
@@ -71,7 +64,6 @@ void SimManager::print_statistics()
     }
     std::cout << "\n" << std::string(colWidth * 6, '-') << "\n";
 
-    // 4. Print Rows with Formatting
     std::cout << std::left << std::setw(colWidth) << trucksMining
         << std::left << std::setw(colWidth) << truckTraveling
         << std::left << std::setw(colWidth) << trucksWaiting
@@ -81,11 +73,36 @@ void SimManager::print_statistics()
         << "\n";
 }
 
-const Truck& SimManager::get_truck(int truckId)
+void SimManager::print_metrics()
 {
-    return trucks[truckId];
-}
-const Station& SimManager::get_station(int stationId)
-{
-    return stations[stationId];
+    int stationsUnused{0};
+    int stationsBusy{0};
+    std::vector<StationMetrics> metrics{};
+    coordinator->get_station_metrics(stationsUnused, stationsBusy, metrics);
+
+    std::cout << "\n\n\nEnd of Simulation. " << tick_count << " minutes elapsed." << std::endl;
+    std::cout << "\n************************************************************************************************************\n";
+
+    std::cout << "**************** Truck Statistics ****************\n";
+    for (const auto &truck : trucks) {
+        TruckMetrics truckMetrics = truck.get_metrics();
+        std::cout << "Truck " << truck.get_id() << " Stats:\n";
+        std::cout << "Minutes Spent Mining: " << truckMetrics.time_mining << std::endl;
+        std::cout << "Minutes Spent Traveling: " << truckMetrics.time_traveling << std::endl;
+        std::cout << "Minutes Spent Waiting to Unload: " << truckMetrics.time_waiting << std::endl;
+        std::cout << "-\n";
+    }
+    std::cout << "**************** Station Statistics ****************\n";
+    int stationId = 0;
+    for (const auto &stationMetric: metrics) {
+        std::cout << "Station " << stationId << " Stats:\n";
+        std::cout << "Total Minutes Utilized: " << stationMetric.time_utilized << std::endl;
+        std::cout << "Total Minutes Idle: " << stationMetric.time_idle << std::endl;
+        std::cout << "Longest Unload Line: " << stationMetric.longest_unload_line << std::endl;
+        std::cout << "Total Trucks Unloaded: " << stationMetric.trucks_unloaded << std::endl;
+        std::cout << "-\n";
+
+        stationId++;
+    }
+    std::cout << "************************************************************************************************************\n";
 }
