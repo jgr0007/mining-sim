@@ -10,24 +10,35 @@ Coordinator::Coordinator(int numStations)
 {
     for (int i=0; i<numStations; i++) {
         stations.emplace_back(Station(i));
+        trucksDestinedForStations.push_back(std::unordered_set<int>{});
     }
 }
-
-int Coordinator::get_destination()
+// Send this truck to the destination that has the least amount of trucks queued or heading there.
+// This is a rough guess at efficient routing since this approach doesn't take into account
+// how close the trucks are to arriving at the station. But since each truck always takes
+// exactly 30 minutes to get to any station, and always takes exactly 5 minutes to unload, this
+// approach is probably super good enough.
+int Coordinator::get_destination(int truckId)
 {
-    int shortestWaitLine = std::numeric_limits<int>::max();
-    int stationId = 0;
+    int shortestWaitQueue = std::numeric_limits<int>::max();
+    int destStationId = 0;
+
     for (int i=0; i<stations.size(); i++) {
-        if (!stations[i].get_waiting()) {
-            stationId = i;
+        const int stationLine = stations[i].get_waiting();
+        const int expectedArrivals = trucksDestinedForStations[i].size();
+        const int totalWaitQueue = stationLine+expectedArrivals;
+
+        if (totalWaitQueue==0) {
+            destStationId = i;
             break;
-        } else if (stations[i].get_waiting()<shortestWaitLine) {
-            shortestWaitLine = stations[i].get_waiting();
-            stationId = i;
+        } else if (totalWaitQueue<shortestWaitQueue) {
+            shortestWaitQueue = totalWaitQueue;
+            destStationId = i;
         }
     }
 
-    return stationId;
+    trucksDestinedForStations[destStationId].insert(truckId);
+    return destStationId;
 }
 
 int Coordinator::get_mining_duration()
@@ -60,6 +71,8 @@ void Coordinator::get_in_line(int truckId, int stationId)
 {
     stations[stationId].add_to_queue(truckId);
     trucksAtStations[truckId] = stationId;
+    // Truck is no longer an expected arrival since it just arrived.
+    trucksDestinedForStations[stationId].erase(truckId);
 }
 
 void Coordinator::increment_station_metrics()

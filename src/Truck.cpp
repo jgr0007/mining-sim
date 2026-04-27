@@ -68,8 +68,8 @@ void Truck::travel_to_station()
 {
     reset_progress();
     status = TRUCK_STATUS_TRAVEL_TO_STATION;
-    destination_unload = coordinator->get_destination();
-    std::cout << "Truck: " << id << " finished mining, and heading to station." << std::endl;
+    destination_unload = coordinator->get_destination(id);
+    std::cout << "Truck: " << id << " finished mining, and heading to station: " << destination_unload << "." << std::endl;
 }
 
 // NOTE:
