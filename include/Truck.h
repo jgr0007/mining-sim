@@ -21,10 +21,41 @@ enum TRUCK_STATUS {
 class Truck {
 public:
     explicit Truck(int _id, const std::shared_ptr<Coordinator> &_coordinator);
+
+    /**
+    * @brief Determine what state truck is in.
+    * 
+    * Tells what the truck is doing right now.
+    *
+    * @return status.
+    */
     TRUCK_STATUS get_status() const;
+    
+    /**
+    * @brief Get truck ID.
+    * 
+    * Const ID used to track truck through its operations.
+    *
+    * @return truckId.
+    */
     int get_id() const;
+
+    /**
+    * @brief Operate truck for one tick.
+    * 
+    * Each call to this function executes one tick (minute)
+    * of simulating this truck's operation.
+    */
     void work();
 
+    /**
+    * @brief Get operation statistics.
+    * 
+    * These are per-truck operation statistics, recorded
+    * for every minute the truck operates.
+    *
+    * @return metrics.
+    */
     TruckMetrics get_metrics() const;
 
 private:

@@ -18,7 +18,21 @@ public:
     */
     void tick();
     
+    /**
+    * @brief Print real-time statistics .
+    * 
+    * High-level statistics meant to give awareness during sim.
+    *
+    */
     void print_statistics();
+    
+    /**
+    * @brief Print summary statistics.
+    * 
+    * Per-truck and per-station statistics meant to be
+    * reported at end of sim.
+    *
+    */
     void print_metrics();
 private:
     std::vector<Truck> trucks;

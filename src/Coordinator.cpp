@@ -13,11 +13,7 @@ Coordinator::Coordinator(int numStations)
         trucksDestinedForStations.push_back(std::unordered_set<int>{});
     }
 }
-// Send this truck to the destination that has the least amount of trucks queued or heading there.
-// This is a rough guess at efficient routing since this approach doesn't take into account
-// how close the trucks are to arriving at the station. But since each truck always takes
-// exactly 30 minutes to get to any station, and always takes exactly 5 minutes to unload, this
-// approach is probably super good enough.
+
 int Coordinator::get_destination(int truckId)
 {
     int shortestWaitQueue = std::numeric_limits<int>::max();
